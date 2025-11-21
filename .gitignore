@@ -1,0 +1,63 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+.env
+.env.*
+venv/
+.venv/
+env/
+ENV/
+venv.bak/
+env.bak/
+
+# Flask instance & config
+instance/
+.flaskenv
+
+# Databases
+*.sqlite3
+*.sqlite
+*.db
+*.db-journal
+
+# Logs, coverage, testing
+*.log
+logs/
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+nosetests.xml
+junit*.xml
+
+# Editor/IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Tooling caches
+.mypy_cache/
+.pyre/
+.pytype/
+celerybeat-schedule
+
+# Optional: ignore migrations if you don't commit them
+# migrations/

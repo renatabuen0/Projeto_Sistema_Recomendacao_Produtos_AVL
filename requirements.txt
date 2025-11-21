@@ -1,0 +1,6 @@
+flask
+pytest
+# Dev 1: Nenhuma dependência externa necessária para os códigos do Dev1
+# Todos os módulos usados são da biblioteca padrão do Python 3.10+
+ttkbootstrap
+flask_cors
