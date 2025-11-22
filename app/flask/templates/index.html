@@ -832,6 +832,12 @@
             executar('POST', '/api/categorias', { nome }, 'resp-cat-post');
         }
 
+        function executarCatPut() {
+            const nome = document.getElementById('cat-put-nome').value;
+            if (!nome) return alert('Preencha o nome');
+            executar('PUT', `/api/categorias/${encodeURIComponent(nome)}`, null, 'resp-cat-put');
+        }
+
         function executarCatDel() {
             const nome = document.getElementById('cat-del-nome').value;
             if (!nome) return alert('Preencha o nome');
