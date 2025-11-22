@@ -311,6 +311,31 @@ def get_categoria(nome):
         logger.error(f"Erro ao obter categoria: {str(e)}")
         return jsonify({'erro': 'Erro interno do servidor'}), 500
 
+@app.route('/api/categorias/<nome>', methods=['PUT'])
+def atualizar_categoria(nome):
+    """Atualiza uma categoria (incrementa peso)"""
+    try:
+        categoria = arvore.buscar_publico(nome)
+        if not categoria:
+            return jsonify({'erro': f'Categoria "{nome}" não encontrada'}), 404
+
+        # Aplicar incremento de peso conforme regras SRHP
+        categoria.aumentar_peso(0.01)
+
+        recomendador.reindexar()
+
+        logger.info(f"Categoria atualizada: {nome}")
+        return jsonify({
+            'mensagem': 'Categoria atualizada com sucesso',
+            'categoria': nome,
+            'novo_peso': categoria.peso_popularidade,
+            'incremento': '+0.01'
+        })
+
+    except Exception as e:
+        logger.error(f"Erro ao atualizar categoria: {str(e)}")
+        return jsonify({'erro': 'Erro interno do servidor'}), 500
+
 @app.route('/api/categorias/<nome>', methods=['DELETE'])
 def deletar_categoria(nome):
     """Remove uma categoria"""
