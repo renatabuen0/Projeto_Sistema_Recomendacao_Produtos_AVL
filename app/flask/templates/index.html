@@ -3,409 +3,952 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRHP - Sistema de Recomendação Hierárquica de Produtos</title>
+    <title>SRHP - API Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --border-color: #334155;
+            --input-bg: #020617;
+            
+            --method-get: #10b981;
+            --method-post: #3b82f6;
+            --method-put: #f59e0b;
+            --method-delete: #ef4444;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
         }
+
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 60px 20px;
         }
+
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            color: white;
-            padding: 30px;
             text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
         }
+
         .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 0;
-            font-size: 2.5em;
-            font-weight: 300;
         }
-        .header p {
-            margin: 10px 0 0 0;
-            opacity: 0.9;
-            font-size: 1.1em;
+
+        /* Stats Section */
+        .stats-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 80px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .content {
-            padding: 30px;
-        }
-        .section {
-            margin-bottom: 40px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            border-left: 4px solid #3498db;
-        }
-        .section h2 {
-            margin-top: 0;
-            color: #2c3e50;
-            font-size: 1.8em;
-            font-weight: 400;
-        }
-        .api-endpoint {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
+
+        .stats-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
-        .method {
-            padding: 5px 10px;
-            border-radius: 3px;
-            color: white;
-            font-weight: bold;
-            min-width: 60px;
-            text-align: center;
-            margin-right: 15px;
+
+        .stats-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            color: var(--text-main);
         }
-        .method.GET { background: #28a745; }
-        .method.POST { background: #007bff; }
-        .method.PUT { background: #ffc107; color: #212529; }
-        .method.DELETE { background: #dc3545; }
-        .endpoint-url {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            color: #495057;
-            flex-grow: 1;
-        }
-        .endpoint-desc {
-            color: #6c757d;
-            font-style: italic;
-        }
-        .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            overflow-x: auto;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 10px 5px;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #2980b9;
-        }
-        .btn.secondary {
-            background: #95a5a6;
-        }
-        .btn.secondary:hover {
-            background: #7f8c8d;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #3498db;
-        }
-        .stat-label {
-            color: #7f8c8d;
-            margin-top: 5px;
-        }
-        .btn-test {
-            padding: 5px 10px;
-            background: #2c3e50;
+
+        .btn-refresh-main {
+            background: linear-gradient(to right, #6366f1, #8b5cf6);
             color: white;
             border: none;
-            border-radius: 3px;
+            padding: 12px 28px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            letter-spacing: 0.02em;
         }
-        .btn-test:hover {
-            background: #34495e;
+
+        .btn-refresh-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .stats-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .stats-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .stat-card {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* AVL Tree Visualization */
+        .tree-visualization {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tree-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .tree-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .tree-status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .tree-status-indicator.balanced {
+            background: var(--method-get);
+        }
+
+        .tree-status-indicator.unbalanced {
+            background: var(--method-delete);
+        }
+
+        .tree-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 5px;
+        }
+
+        .tree-data {
+            color: #a5b4fc;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Resource Sections */
+        .resource-section {
+            margin-bottom: 100px;
+        }
+
+        .resource-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .resource-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Operation Card */
+        .op-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .op-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .op-header {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .method {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #fff;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method.GET { background-color: var(--method-get); }
+        .method.POST { background-color: var(--method-post); }
+        .method.PUT { background-color: var(--method-put); }
+        .method.DELETE { background-color: var(--method-delete); }
+
+        .endpoint {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .op-body {
+            padding: 35px;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="number"] {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Curl Preview */
+        .curl-preview {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #a5b4fc;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .curl-label {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--card-bg);
+            padding: 0 5px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Response Area */
+        .response-area {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #10b981;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            border: 1px solid var(--border-color);
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .response-area.error {
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        /* Buttons */
+        .btn-execute {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-execute:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-refresh {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-refresh:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📦 SRHP</h1>
-            <p>Sistema de Recomendação Hierárquica de Produtos</p>
+            <h1>SRHP API Console</h1>
+            <p>Interface interativa para teste de endpoints REST</p>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px;">
+                <a href="/api/colecao" target="_blank" style="color: var(--primary); text-decoration: none; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; transition: all 0.2s;">Ver JSON Bruto</a>
+            </div>
         </div>
 
-        <div class="content">
-            <div class="section">
-                <h2>🚀 Interface Web</h2>
-                <p>O sistema agora oferece uma API REST completa para integração com outras aplicações.</p>
-                <a href="#api" class="btn">Ver Documentação da API</a>
-                <a href="/api/colecao" class="btn secondary" target="_blank">Ver Dados JSON</a>
+        <!-- Stats Section with Tree Visualization -->
+        <div class="stats-section">
+            <div class="stats-header">
+                <h2>Estado do Sistema AVL</h2>
+                <button class="btn-refresh-main" onclick="carregarEstatisticas()">Atualizar Status</button>
+            </div>
+            
+            <div class="stats-content">
+                <!-- Left: Metrics -->
+                <div>
+                    <div class="stats-metrics">
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-categorias">-</div>
+                            <div class="stat-label">Categorias</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-produtos">-</div>
+                            <div class="stat-label">Produtos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Tree Info -->
+                <div class="tree-visualization">
+                    <div class="tree-info">
+                        <div class="tree-status">
+                            <div class="tree-status-indicator balanced" id="tree-indicator"></div>
+                            <span style="color: var(--text-main); font-weight: 600;" id="tree-status-text">Carregando...</span>
+                        </div>
+                        
+                        <div>
+                            <div class="tree-label">Altura da Árvore</div>
+                            <div class="tree-data" id="tree-altura">-</div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                            <div class="tree-label">Status de Balanceamento</div>
+                            <div class="tree-data" id="tree-balance-status">Verificando...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORIAS -->
+        <div class="resource-section">
+            <div class="resource-title">Categorias</div>
+
+            <!-- GET List -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method GET">GET</span>
+                    <span class="endpoint">/api/categorias</span>
+                </div>
+                <div class="op-body">
+                    <div class="curl-preview" id="curl-cat-list">curl -X GET "http://localhost:5000/api/categorias"</div>
+                    <button class="btn-execute" onclick="executar('GET', '/api/categorias', null, 'resp-cat-list')">Executar</button>
+                    <div class="response-area" id="resp-cat-list"></div>
+                </div>
             </div>
 
-            <div class="section">
-                <h2>📊 Estatísticas do Sistema</h2>
-                <div class="stats" id="stats">
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-categorias">-</div>
-                        <div class="stat-label">Categorias</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="total-produtos">-</div>
-                        <div class="stat-label">Produtos</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="altura-arvore">-</div>
-                        <div class="stat-label">Altura da Árvore</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="balanceada">-</div>
-                        <div class="stat-label">Balanceada</div>
-                    </div>
+            <!-- GET One -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method GET">GET</span>
+                    <span class="endpoint">/api/categorias/{nome}</span>
                 </div>
-                <button class="btn" onclick="carregarEstatisticas()">🔄 Atualizar Estatísticas</button>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome da Categoria</label>
+                            <input type="text" id="cat-get-nome" oninput="atualizarCurlCatGet()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-cat-get">curl -X GET "http://localhost:5000/api/categorias/{nome}"</div>
+                    <button class="btn-execute" onclick="executarCatGet()">Executar</button>
+                    <div class="response-area" id="resp-cat-get"></div>
+                </div>
             </div>
 
-            <div id="api" class="section">
-                <h2>📚 Testar API REST</h2>
-
-                <h3>🔍 Busca e Listagem</h3>
-                <div class="api-endpoint">
-                    <span class="method GET">GET</span>
-                    <span class="endpoint-url">/api/produtos</span>
-                    <button class="btn-test" onclick="testarGet('/api/produtos')">Testar</button>
-                </div>
-                <div class="api-endpoint">
-                    <span class="method GET">GET</span>
-                    <span class="endpoint-url">/api/produtos/buscar?q=</span>
-                    <input type="text" id="busca-termo" placeholder="Termo..." style="margin: 0 10px; padding: 5px;">
-                    <button class="btn-test" onclick="testarBusca()">Testar</button>
-                </div>
-                <div class="api-endpoint">
-                    <span class="method GET">GET</span>
-                    <span class="endpoint-url">/api/categorias</span>
-                    <button class="btn-test" onclick="testarGet('/api/categorias')">Testar</button>
-                </div>
-                <div class="api-endpoint">
-                    <span class="method GET">GET</span>
-                    <span class="endpoint-url">/api/colecao</span>
-                    <button class="btn-test" onclick="testarGet('/api/colecao')">Testar</button>
-                </div>
-
-                <h3>➕ Criação (POST)</h3>
-                <div class="api-endpoint">
+            <!-- POST Create -->
+            <div class="op-card">
+                <div class="op-header">
                     <span class="method POST">POST</span>
-                    <span class="endpoint-url">/api/produtos</span>
-                    <div style="display: flex; gap: 5px; margin: 0 10px;">
-                        <input type="text" id="novo-prod-nome" placeholder="Nome Produto">
-                        <input type="text" id="novo-prod-cat" placeholder="Categoria">
+                    <span class="endpoint">/api/categorias</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome da Nova Categoria</label>
+                            <input type="text" id="cat-post-nome" oninput="atualizarCurlCatPost()">
+                        </div>
                     </div>
-                    <button class="btn-test" onclick="testarCriarProduto()">Testar</button>
+                    <div class="curl-preview" id="curl-cat-post">curl -X POST "http://localhost:5000/api/categorias" \
+-H "Content-Type: application/json" \
+-d '{"nome": "..."}'</div>
+                    <button class="btn-execute" onclick="executarCatPost()">Executar</button>
+                    <div class="response-area" id="resp-cat-post"></div>
                 </div>
-                <div class="api-endpoint">
-                    <span class="method POST">POST</span>
-                    <span class="endpoint-url">/api/categorias</span>
-                    <input type="text" id="nova-cat-nome" placeholder="Nome Categoria" style="margin: 0 10px;">
-                    <button class="btn-test" onclick="testarCriarCategoria()">Testar</button>
-                </div>
+            </div>
 
-                <h3>✏️ Atualização (PUT)</h3>
-                <div class="api-endpoint">
+            <!-- PUT Update -->
+            <div class="op-card">
+                <div class="op-header">
                     <span class="method PUT">PUT</span>
-                    <span class="endpoint-url">/api/produtos/{cat}/{prod}</span>
-                    <div style="display: flex; gap: 5px; margin: 0 10px;">
-                        <input type="text" id="put-cat" placeholder="Categoria">
-                        <input type="text" id="put-prod" placeholder="Produto">
-                    </div>
-                    <button class="btn-test" onclick="testarAtualizarProduto()">Testar</button>
+                    <span class="endpoint">/api/categorias/{nome}</span>
                 </div>
-
-                <h3>🗑️ Remoção (DELETE)</h3>
-                <div class="api-endpoint">
-                    <span class="method DELETE">DELETE</span>
-                    <span class="endpoint-url">/api/produtos/{cat}/{prod}</span>
-                    <div style="display: flex; gap: 5px; margin: 0 10px;">
-                        <input type="text" id="del-cat" placeholder="Categoria">
-                        <input type="text" id="del-prod" placeholder="Produto">
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome da Categoria</label>
+                            <input type="text" id="cat-put-nome" oninput="atualizarCurlCatPut()">
+                        </div>
                     </div>
-                    <button class="btn-test" onclick="testarDeletarProduto()">Testar</button>
-                </div>
-
-                <div id="resultado-teste" style="margin-top: 20px; display: none;">
-                    <h4>Resultado:</h4>
-                    <pre class="code-block" id="json-resultado"></pre>
+                    <div class="curl-preview" id="curl-cat-put">curl -X PUT "http://localhost:5000/api/categorias/{nome}"</div>
+                    <button class="btn-execute" onclick="executarCatPut()">Executar</button>
+                    <div class="response-area" id="resp-cat-put"></div>
                 </div>
             </div>
 
-            <div class="section">
-                <h2>💡 Exemplos de Uso</h2>
-
-                <h3>Buscar produtos por prefixo:</h3>
-                <div class="code-block">
-curl "http://localhost:5000/api/produtos/buscar?q=banana"
+            <!-- DELETE -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method DELETE">DEL</span>
+                    <span class="endpoint">/api/categorias/{nome}</span>
                 </div>
-
-                <h3>Criar um novo produto:</h3>
-                <div class="code-block">
-curl -X POST "http://localhost:5000/api/produtos" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nome": "Novo Produto",
-    "categoria": "Bebidas"
-  }'
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome da Categoria</label>
+                            <input type="text" id="cat-del-nome" oninput="atualizarCurlCatDel()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-cat-del">curl -X DELETE "http://localhost:5000/api/categorias/{nome}"</div>
+                    <button class="btn-execute" onclick="executarCatDel()">Executar</button>
+                    <div class="response-area" id="resp-cat-del"></div>
                 </div>
+            </div>
+        </div>
 
-                <h3>Incrementar popularidade de um produto:</h3>
-                <div class="code-block">
-curl -X PUT "http://localhost:5000/api/produtos/Bebidas/Suco%20de%20Uva"
+        <!-- SUBCATEGORIAS -->
+        <div class="resource-section">
+            <div class="resource-title">Subcategorias</div>
+
+            <!-- GET List -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method GET">GET</span>
+                    <span class="endpoint">/api/categorias/{cat}/subcategorias</span>
                 </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Categoria Pai</label>
+                            <input type="text" id="sub-get-cat" oninput="atualizarCurlSubGet()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-sub-get">curl -X GET "http://localhost:5000/api/categorias/{cat}/subcategorias"</div>
+                    <button class="btn-execute" onclick="executarSubGet()">Executar</button>
+                    <div class="response-area" id="resp-sub-get"></div>
+                </div>
+            </div>
 
-                <h3>Ver coleção completa:</h3>
-                <div class="code-block">
-curl "http://localhost:5000/api/colecao"
+            <!-- POST Create -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method POST">POST</span>
+                    <span class="endpoint">/api/categorias/{cat}/subcategorias</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Categoria Pai</label>
+                            <input type="text" id="sub-post-cat" oninput="atualizarCurlSubPost()">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome da Subcategoria</label>
+                            <input type="text" id="sub-post-nome" oninput="atualizarCurlSubPost()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-sub-post">curl -X POST "http://localhost:5000/api/categorias/{cat}/subcategorias" \
+-H "Content-Type: application/json" \
+-d '{"nome": "..."}'</div>
+                    <button class="btn-execute" onclick="executarSubPost()">Executar</button>
+                    <div class="response-area" id="resp-sub-post"></div>
+                </div>
+            </div>
+
+            <!-- DELETE -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method DELETE">DEL</span>
+                    <span class="endpoint">/api/categorias/{cat}/subcategorias/{sub}</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Categoria Pai</label>
+                            <input type="text" id="sub-del-cat" oninput="atualizarCurlSubDel()">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome da Subcategoria</label>
+                            <input type="text" id="sub-del-nome" oninput="atualizarCurlSubDel()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-sub-del">curl -X DELETE "http://localhost:5000/api/categorias/{cat}/subcategorias/{sub}"</div>
+                    <button class="btn-execute" onclick="executarSubDel()">Executar</button>
+                    <div class="response-area" id="resp-sub-del"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUTOS -->
+        <div class="resource-section">
+            <div class="resource-title">Produtos</div>
+
+            <!-- GET List -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method GET">GET</span>
+                    <span class="endpoint">/api/produtos</span>
+                </div>
+                <div class="op-body">
+                    <div class="curl-preview">curl -X GET "http://localhost:5000/api/produtos"</div>
+                    <button class="btn-execute" onclick="executar('GET', '/api/produtos', null, 'resp-prod-list')">Executar</button>
+                    <div class="response-area" id="resp-prod-list"></div>
+                </div>
+            </div>
+
+            <!-- GET Search -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method GET">GET</span>
+                    <span class="endpoint">/api/produtos/buscar</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Termo de Busca (q)</label>
+                            <input type="text" id="prod-search-q" oninput="atualizarCurlProdSearch()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-prod-search">curl -X GET "http://localhost:5000/api/produtos/buscar?q=..."</div>
+                    <button class="btn-execute" onclick="executarProdSearch()">Executar</button>
+                    <div class="response-area" id="resp-prod-search"></div>
+                </div>
+            </div>
+
+            <!-- POST Create -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method POST">POST</span>
+                    <span class="endpoint">/api/produtos</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome do Produto</label>
+                            <input type="text" id="prod-post-nome" oninput="atualizarCurlProdPost()">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <input type="text" id="prod-post-cat" oninput="atualizarCurlProdPost()">
+                        </div>
+                        <div class="form-group">
+                            <label>Subcategoria (Opcional)</label>
+                            <input type="text" id="prod-post-sub" oninput="atualizarCurlProdPost()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-prod-post">curl -X POST "http://localhost:5000/api/produtos" ...</div>
+                    <button class="btn-execute" onclick="executarProdPost()">Executar</button>
+                    <div class="response-area" id="resp-prod-post"></div>
+                </div>
+            </div>
+
+            <!-- PUT Update -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method PUT">PUT</span>
+                    <span class="endpoint">/api/produtos/{cat}/{prod}</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <input type="text" id="prod-put-cat" oninput="atualizarCurlProdPut()">
+                        </div>
+                        <div class="form-group">
+                            <label>Produto</label>
+                            <input type="text" id="prod-put-nome" oninput="atualizarCurlProdPut()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-prod-put">curl -X PUT "http://localhost:5000/api/produtos/{cat}/{prod}"</div>
+                    <button class="btn-execute" onclick="executarProdPut()">Executar</button>
+                    <div class="response-area" id="resp-prod-put"></div>
+                </div>
+            </div>
+
+            <!-- DELETE -->
+            <div class="op-card">
+                <div class="op-header">
+                    <span class="method DELETE">DEL</span>
+                    <span class="endpoint">/api/produtos/{cat}/{prod}</span>
+                </div>
+                <div class="op-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <input type="text" id="prod-del-cat" oninput="atualizarCurlProdDel()">
+                        </div>
+                        <div class="form-group">
+                            <label>Produto</label>
+                            <input type="text" id="prod-del-nome" oninput="atualizarCurlProdDel()">
+                        </div>
+                    </div>
+                    <div class="curl-preview" id="curl-prod-del">curl -X DELETE "http://localhost:5000/api/produtos/{cat}/{prod}"</div>
+                    <button class="btn-execute" onclick="executarProdDel()">Executar</button>
+                    <div class="response-area" id="resp-prod-del"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Funções de teste da API
-        async function mostrarResultado(response) {
-            const div = document.getElementById('resultado-teste');
-            const pre = document.getElementById('json-resultado');
-            div.style.display = 'block';
+        const BASE_URL = window.location.origin;
+
+        // --- Funções de Atualização de cURL ---
+
+        function atualizarCurlCatGet() {
+            const nome = document.getElementById('cat-get-nome').value || '{nome}';
+            document.getElementById('curl-cat-get').textContent = `curl -X GET "${BASE_URL}/api/categorias/${encodeURIComponent(nome)}"`;
+        }
+
+        function atualizarCurlCatPost() {
+            const nome = document.getElementById('cat-post-nome').value;
+            const body = JSON.stringify({ nome: nome || "..." });
+            document.getElementById('curl-cat-post').textContent = `curl -X POST "${BASE_URL}/api/categorias" \\\n-H "Content-Type: application/json" \\\n-d '${body}'`;
+        }
+
+        function atualizarCurlCatPut() {
+            const nome = document.getElementById('cat-put-nome').value || '{nome}';
+            document.getElementById('curl-cat-put').textContent = `curl -X PUT "${BASE_URL}/api/categorias/${encodeURIComponent(nome)}"`;
+        }
+
+        function atualizarCurlCatDel() {
+            const nome = document.getElementById('cat-del-nome').value || '{nome}';
+            document.getElementById('curl-cat-del').textContent = `curl -X DELETE "${BASE_URL}/api/categorias/${encodeURIComponent(nome)}"`;
+        }
+
+        function atualizarCurlSubGet() {
+            const cat = document.getElementById('sub-get-cat').value || '{cat}';
+            document.getElementById('curl-sub-get').textContent = `curl -X GET "${BASE_URL}/api/categorias/${encodeURIComponent(cat)}/subcategorias"`;
+        }
+
+        function atualizarCurlSubPost() {
+            const cat = document.getElementById('sub-post-cat').value || '{cat}';
+            const nome = document.getElementById('sub-post-nome').value;
+            const body = JSON.stringify({ nome: nome || "..." });
+            document.getElementById('curl-sub-post').textContent = `curl -X POST "${BASE_URL}/api/categorias/${encodeURIComponent(cat)}/subcategorias" \\\n-H "Content-Type: application/json" \\\n-d '${body}'`;
+        }
+
+        function atualizarCurlSubDel() {
+            const cat = document.getElementById('sub-del-cat').value || '{cat}';
+            const sub = document.getElementById('sub-del-nome').value || '{sub}';
+            document.getElementById('curl-sub-del').textContent = `curl -X DELETE "${BASE_URL}/api/categorias/${encodeURIComponent(cat)}/subcategorias/${encodeURIComponent(sub)}"`;
+        }
+
+        function atualizarCurlProdSearch() {
+            const q = document.getElementById('prod-search-q').value || '...';
+            document.getElementById('curl-prod-search').textContent = `curl -X GET "${BASE_URL}/api/produtos/buscar?q=${encodeURIComponent(q)}"`;
+        }
+
+        function atualizarCurlProdPost() {
+            const nome = document.getElementById('prod-post-nome').value;
+            const cat = document.getElementById('prod-post-cat').value;
+            const sub = document.getElementById('prod-post-sub').value;
             
+            const data = { nome: nome || "...", categoria: cat || "..." };
+            if (sub) data.subcategoria = sub;
+            
+            document.getElementById('curl-prod-post').textContent = `curl -X POST "${BASE_URL}/api/produtos" \\\n-H "Content-Type: application/json" \\\n-d '${JSON.stringify(data)}'`;
+        }
+
+        function atualizarCurlProdPut() {
+            const cat = document.getElementById('prod-put-cat').value || '{cat}';
+            const prod = document.getElementById('prod-put-nome').value || '{prod}';
+            document.getElementById('curl-prod-put').textContent = `curl -X PUT "${BASE_URL}/api/produtos/${encodeURIComponent(cat)}/${encodeURIComponent(prod)}"`;
+        }
+
+        function atualizarCurlProdDel() {
+            const cat = document.getElementById('prod-del-cat').value || '{cat}';
+            const prod = document.getElementById('prod-del-nome').value || '{prod}';
+            document.getElementById('curl-prod-del').textContent = `curl -X DELETE "${BASE_URL}/api/produtos/${encodeURIComponent(cat)}/${encodeURIComponent(prod)}"`;
+        }
+
+        // --- Funções de Execução ---
+
+        async function executar(method, url, body, outputId) {
+            const output = document.getElementById(outputId);
+            output.style.display = 'block';
+            output.textContent = 'Carregando...';
+            output.classList.remove('error');
+
             try {
-                const data = await response.json();
-                pre.textContent = JSON.stringify(data, null, 2);
-                
-                // Atualizar estatísticas se a operação foi bem sucedida
-                if (response.ok) {
-                    carregarEstatisticas();
+                const options = { method };
+                if (body) {
+                    options.headers = { 'Content-Type': 'application/json' };
+                    options.body = JSON.stringify(body);
                 }
-            } catch (e) {
-                pre.textContent = "Erro ao processar resposta JSON";
+
+                const res = await fetch(url, options);
+                const data = await res.json();
+                
+                output.textContent = JSON.stringify(data, null, 2);
+                if (!res.ok) output.classList.add('error');
+                
+                if (res.ok) carregarEstatisticas();
+            } catch (err) {
+                output.textContent = 'Erro de conexão: ' + err.message;
+                output.classList.add('error');
             }
         }
 
-        async function testarGet(url) {
-            try {
-                const response = await fetch(url);
-                mostrarResultado(response);
-            } catch (e) {
-                alert('Erro na requisição: ' + e);
-            }
+        function executarCatGet() {
+            const nome = document.getElementById('cat-get-nome').value;
+            if (!nome) return alert('Preencha o nome');
+            executar('GET', `/api/categorias/${encodeURIComponent(nome)}`, null, 'resp-cat-get');
         }
 
-        async function testarBusca() {
-            const termo = document.getElementById('busca-termo').value;
-            if (!termo) return alert('Digite um termo para buscar');
-            testarGet(`/api/produtos/buscar?q=${encodeURIComponent(termo)}`);
+        function executarCatPost() {
+            const nome = document.getElementById('cat-post-nome').value;
+            if (!nome) return alert('Preencha o nome');
+            executar('POST', '/api/categorias', { nome }, 'resp-cat-post');
         }
 
-        async function testarCriarProduto() {
-            const nome = document.getElementById('novo-prod-nome').value;
-            const cat = document.getElementById('novo-prod-cat').value;
-            
+        function executarCatDel() {
+            const nome = document.getElementById('cat-del-nome').value;
+            if (!nome) return alert('Preencha o nome');
+            executar('DELETE', `/api/categorias/${encodeURIComponent(nome)}`, null, 'resp-cat-del');
+        }
+
+        function executarSubGet() {
+            const cat = document.getElementById('sub-get-cat').value;
+            if (!cat) return alert('Preencha a categoria');
+            executar('GET', `/api/categorias/${encodeURIComponent(cat)}/subcategorias`, null, 'resp-sub-get');
+        }
+
+        function executarSubPost() {
+            const cat = document.getElementById('sub-post-cat').value;
+            const nome = document.getElementById('sub-post-nome').value;
+            if (!cat || !nome) return alert('Preencha todos os campos');
+            executar('POST', `/api/categorias/${encodeURIComponent(cat)}/subcategorias`, { nome }, 'resp-sub-post');
+        }
+
+        function executarSubDel() {
+            const cat = document.getElementById('sub-del-cat').value;
+            const sub = document.getElementById('sub-del-nome').value;
+            if (!cat || !sub) return alert('Preencha todos os campos');
+            executar('DELETE', `/api/categorias/${encodeURIComponent(cat)}/subcategorias/${encodeURIComponent(sub)}`, null, 'resp-sub-del');
+        }
+
+        function executarProdSearch() {
+            const q = document.getElementById('prod-search-q').value;
+            if (!q) return alert('Preencha o termo');
+            executar('GET', `/api/produtos/buscar?q=${encodeURIComponent(q)}`, null, 'resp-prod-search');
+        }
+
+        function executarProdPost() {
+            const nome = document.getElementById('prod-post-nome').value;
+            const cat = document.getElementById('prod-post-cat').value;
+            const sub = document.getElementById('prod-post-sub').value;
             if (!nome || !cat) return alert('Preencha nome e categoria');
-
-            try {
-                const response = await fetch('/api/produtos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome, categoria: cat })
-                });
-                mostrarResultado(response);
-            } catch (e) {
-                alert('Erro na requisição: ' + e);
-            }
-        }
-
-        async function testarCriarCategoria() {
-            const nome = document.getElementById('nova-cat-nome').value;
-            if (!nome) return alert('Preencha o nome da categoria');
-
-            try {
-                const response = await fetch('/api/categorias', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: nome })
-                });
-                mostrarResultado(response);
-            } catch (e) {
-                alert('Erro na requisição: ' + e);
-            }
-        }
-
-        async function testarAtualizarProduto() {
-            const cat = document.getElementById('put-cat').value;
-            const prod = document.getElementById('put-prod').value;
             
-            if (!cat || !prod) return alert('Preencha categoria e produto');
-
-            try {
-                const response = await fetch(`/api/produtos/${encodeURIComponent(cat)}/${encodeURIComponent(prod)}`, {
-                    method: 'PUT'
-                });
-                mostrarResultado(response);
-            } catch (e) {
-                alert('Erro na requisição: ' + e);
-            }
-        }
-
-        async function testarDeletarProduto() {
-            const cat = document.getElementById('del-cat').value;
-            const prod = document.getElementById('del-prod').value;
+            const body = { nome, categoria: cat };
+            if (sub) body.subcategoria = sub;
             
-            if (!cat || !prod) return alert('Preencha categoria e produto');
-
-            try {
-                const response = await fetch(`/api/produtos/${encodeURIComponent(cat)}/${encodeURIComponent(prod)}`, {
-                    method: 'DELETE'
-                });
-                mostrarResultado(response);
-            } catch (e) {
-                alert('Erro na requisição: ' + e);
-            }
+            executar('POST', '/api/produtos', body, 'resp-prod-post');
         }
 
-        // Carregar estatísticas quando a página carrega
+        function executarProdPut() {
+            const cat = document.getElementById('prod-put-cat').value;
+            const prod = document.getElementById('prod-put-nome').value;
+            if (!cat || !prod) return alert('Preencha todos os campos');
+            executar('PUT', `/api/produtos/${encodeURIComponent(cat)}/${encodeURIComponent(prod)}`, null, 'resp-prod-put');
+        }
+
+        function executarProdDel() {
+            const cat = document.getElementById('prod-del-cat').value;
+            const prod = document.getElementById('prod-del-nome').value;
+            if (!cat || !prod) return alert('Preencha todos os campos');
+            executar('DELETE', `/api/produtos/${encodeURIComponent(cat)}/${encodeURIComponent(prod)}`, null, 'resp-prod-del');
+        }
+
         async function carregarEstatisticas() {
             try {
                 const response = await fetch('/api/estatisticas');
                 const stats = await response.json();
 
-                document.getElementById('total-categorias').textContent = stats.arvore_avl.total_categorias;
-                document.getElementById('total-produtos').textContent = stats.produtos.total;
-                document.getElementById('altura-arvore').textContent = stats.arvore_avl.altura;
-                document.getElementById('balanceada').textContent = stats.arvore_avl.balanceada ? 'Sim' : 'Não';
+                // Atualizar métricas principais
+                atualizarNumero('stat-categorias', stats.arvore_avl.total_categorias);
+                atualizarNumero('stat-produtos', stats.produtos.total);
+                atualizarNumero('tree-altura', stats.arvore_avl.altura);
+                
+                // Atualizar status de balanceamento
+                const isBalanced = stats.arvore_avl.balanceada;
+                const treeIndicator = document.getElementById('tree-indicator');
+                const treeStatusText = document.getElementById('tree-status-text');
+                const treeBalanceStatus = document.getElementById('tree-balance-status');
+                
+                // Atualizar indicador visual
+                if (isBalanced) {
+                    treeIndicator.classList.remove('unbalanced');
+                    treeIndicator.classList.add('balanced');
+                    treeStatusText.textContent = 'Árvore Balanceada';
+                    treeStatusText.style.color = 'var(--method-get)';
+                    treeBalanceStatus.textContent = '✓ A árvore AVL está perfeitamente balanceada';
+                    treeBalanceStatus.style.color = 'var(--method-get)';
+                } else {
+                    treeIndicator.classList.remove('balanced');
+                    treeIndicator.classList.add('unbalanced');
+                    treeStatusText.textContent = 'Desbalanceada';
+                    treeStatusText.style.color = 'var(--method-delete)';
+                    treeBalanceStatus.textContent = '⚠ A árvore necessita rebalanceamento';
+                    treeBalanceStatus.style.color = 'var(--method-delete)';
+                }
+
             } catch (error) {
                 console.error('Erro ao carregar estatísticas:', error);
+                document.getElementById('tree-status-text').textContent = 'Erro';
+                document.getElementById('tree-status-text').style.color = 'var(--method-delete)';
             }
         }
 
-        // Carregar estatísticas ao carregar a página
+        function atualizarNumero(id, valor) {
+            const el = document.getElementById(id);
+            // Animar o número
+            let currentValue = parseInt(el.textContent) || 0;
+            const diff = valor - currentValue;
+            const steps = 20;
+            let step = 0;
+            
+            const interval = setInterval(() => {
+                step++;
+                const newValue = Math.floor(currentValue + (diff / steps) * step);
+                el.textContent = newValue;
+                if (step >= steps) {
+                    el.textContent = valor;
+                    clearInterval(interval);
+                }
+            }, 10);
+        }
+
         window.addEventListener('load', carregarEstatisticas);
     </script>
 </body>

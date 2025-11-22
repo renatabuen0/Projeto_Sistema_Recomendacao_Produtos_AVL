@@ -335,6 +335,32 @@ def deletar_categoria(nome):
 # API REST - SUBCATEGORIAS
 # ==========================================
 
+@app.route('/api/categorias/<categoria>/subcategorias', methods=['GET'])
+def get_subcategorias(categoria):
+    """Lista as subcategorias de uma categoria"""
+    try:
+        categoria_obj = arvore.buscar_publico(categoria)
+        if not categoria_obj:
+            return jsonify({'erro': f'Categoria "{categoria}" não encontrada'}), 404
+
+        subcategorias = []
+        for sub in categoria_obj.subcategorias:
+            subcategorias.append({
+                'nome': sub.nome,
+                'peso_popularidade': sub.peso_popularidade,
+                'produtos_count': len(sub.get_produtos_ordenados_por_peso())
+            })
+
+        return jsonify({
+            'categoria': categoria,
+            'subcategorias': subcategorias,
+            'total': len(subcategorias)
+        })
+
+    except Exception as e:
+        logger.error(f"Erro ao listar subcategorias: {str(e)}")
+        return jsonify({'erro': 'Erro interno do servidor'}), 500
+
 @app.route('/api/categorias/<categoria>/subcategorias', methods=['POST'])
 def criar_subcategoria(categoria):
     """Cria uma subcategoria dentro de uma categoria"""
